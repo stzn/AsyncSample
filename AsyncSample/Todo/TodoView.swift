@@ -11,14 +11,20 @@ struct TodoView: View {
     @ObservedObject var model: TodoViewModel
 
     var body: some View {
-        if let todo = model.todo {
-            VStack {
-                Text("Title: \(todo.title)")
-                Text("Completed: \(todo.completed ? "Yes" : "No")")
+        VStack(spacing: 12) {
+            if let todo = model.todo {
+                VStack(alignment: .leading) {
+                    Text("Title: \(todo.title)")
+                    Text("Completed: \(todo.completed ? "Yes" : "No")")
+                }
             }
-        } else {
-            Text("Loading...").onAppear {
-                model.getTodo()
+            if model.isLoading {
+                ProgressView()
+            }
+            HStack(spacing: 8) {
+                Button("Tap", action: { })
+                Button("Load", action: { model.getTodo() })
+                    .disabled(model.isLoading)
             }
         }
     }

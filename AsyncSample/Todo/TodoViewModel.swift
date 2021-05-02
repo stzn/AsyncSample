@@ -9,6 +9,7 @@ import SwiftUI
 
 final class TodoViewModel: ObservableObject {
     @Published var todo: Todo?
+    @Published var isLoading: Bool = false
 
     private let loader: TodoLoader
     init(loader: @escaping TodoLoader) {
@@ -16,11 +17,12 @@ final class TodoViewModel: ObservableObject {
     }
 
     func getTodo() {
-        detach {
-            let todo = try await self.loader()
-            await MainActor.run {
-                self.todo = todo
-            }
+        todo = nil
+        isLoading = true
+        async { @MainActor in
+            let loadedTodo = try? await self.loader()
+            todo = loadedTodo
+            isLoading = false
         }
     }
 }

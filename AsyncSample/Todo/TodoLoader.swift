@@ -13,9 +13,10 @@ func loadTodo() async throws -> Todo {
     struct NoDataError: Error {}
 
     let list = try await fetchTodoList()
-    guard let id = list.first?.id else {
+    guard !list.isEmpty else {
         throw NoDataError()
     }
+    let id = list[Int.random(in: 0..<list.count)].id
     return try await fetchTodoDetail(id: id)
 }
 
@@ -47,5 +48,10 @@ func fetchTodoDetail(id: Int) async throws -> Todo {
     let url = URL(string: "https://jsonplaceholder.typicode.com/todos/\(id)")!
     let data = try await request(url)
     return try JSONDecoder().decode(Todo.self, from: data)
+//    let handle = Task.runDetached { () -> Todo in
+//        sleep(3)
+//        return try JSONDecoder().decode(Todo.self, from: data)
+//    }
+//    return try await handle.get()
 }
 

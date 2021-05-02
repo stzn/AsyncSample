@@ -11,21 +11,20 @@ struct UserView: View {
     @ObservedObject var model: AsyncUserViewModel
 
     var body: some View {
-        if let user = model.user {
-            GeometryReader { proxy in
-                VStack(alignment: .center) {
-                    Text("User").font(.title)
-                    Text("name: \(user.name)").font(.body)
-                    Text("age: \(user.age)").font(.body)
-                }
-                .frame(width: proxy.size.width)
-                .background(user.isPremium ? Color.yellow : Color.blue)
+        VStack(alignment: .center) {
+            if let user = model.user {
+                Text("User").font(.title)
+                Text("name: \(user.name)").font(.body)
+                Text("age: \(user.age)").font(.body)
             }
-        } else {
-            Text("Loading...").onAppear {
-                model.getUserInfo()
+            if model.isLoading {
+                ProgressView()
             }
+            Button("Tap", action: { })
+            Button("Load", action: { model.getUserInfo() })
+                .disabled(model.isLoading)
         }
+        .background(model.isPremium ? Color.yellow : Color.clear)
     }
 }
 

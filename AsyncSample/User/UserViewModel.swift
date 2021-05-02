@@ -7,16 +7,56 @@
 
 import SwiftUI
 
-final class UserViewModel: ObservableObject {
-    private let queue = DispatchQueue(label: "shiz.sample.UserViewModel", attributes: .concurrent)
-
+final class SyncUserViewModel: ObservableObject {
     @Published var user: User?
+    @Published var isLoading: Bool = false
+
+    var isPremium: Bool { user?.isPremium ?? false }
+
+    func getUserInfo() {
+        let id = getUserId()
+        let name = getUserName(id: id)
+        let age = getUserAge(id: id)
+        let isPremium = getUserIsPremium(id: id)
+        self.user = User(id: id,
+                         name: name,
+                         age: age,
+                         isPremium: isPremium)
+    }
+
+    func getUserId() -> UserID {
+        sleep(2)
+        return UUID()
+    }
+
+    func getUserName(id: UserID) -> String {
+        sleep(2)
+        return "User Name"
+    }
+
+    func getUserAge(id: UserID) -> Int {
+        sleep(2)
+        return 20
+    }
+
+    func getUserIsPremium(id: UserID) -> Bool {
+        sleep(2)
+        return true
+    }
+
+}
+
+final class CompletionUserViewModel: ObservableObject {
+    @Published var user: User?
+    @Published var isLoading: Bool = false
+
+    var isPremium: Bool { user?.isPremium ?? false }
 
     func getUserInfo() {
         getUserId { [weak self] id in
             self?.getUserName(id: id) { [weak self] name in
                 self?.getUserAge(id: id) { [weak self] age in
-                    self?.getIsPremium(id: id) { isPremium in
+                    self?.getUserIsPremium(id: id) { isPremium in
                         DispatchQueue.main.async { [weak self] in
                             self?.user = User(id: id,
                                               name: name,
@@ -30,25 +70,25 @@ final class UserViewModel: ObservableObject {
     }
 
     func getUserId(completion: @escaping (UserID) -> Void) {
-        queue.asyncAfter(deadline: .now() + 2.0) {
+        DispatchQueue.global().asyncAfter(deadline: .now() + 2.0) {
             completion(UUID())
         }
     }
 
     func getUserName(id: UserID, completion: @escaping (String) -> Void) {
-        queue.asyncAfter(deadline: .now() + 2.0) {
+        DispatchQueue.global().asyncAfter(deadline: .now() + 2.0) {
             completion("User Name")
         }
     }
 
     func getUserAge(id: UserID, completion: @escaping (Int) -> Void) {
-        queue.asyncAfter(deadline: .now() + 2.0) {
+        DispatchQueue.global().asyncAfter(deadline: .now() + 2.0) {
             completion(20)
         }
     }
 
-    func getIsPremium(id: UserID, completion: @escaping (Bool) -> Void) {
-        queue.asyncAfter(deadline: .now() + 2.0) {
+    func getUserIsPremium(id: UserID, completion: @escaping (Bool) -> Void) {
+        DispatchQueue.global().asyncAfter(deadline: .now() + 2.0) {
             completion(true)
         }
     }
@@ -57,23 +97,19 @@ final class UserViewModel: ObservableObject {
 
 final class AsyncUserViewModel: ObservableObject {
     @Published var user: User?
+    @Published var isLoading: Bool = false
 
-    var taskHandle: Task.Handle<Void, Error>?
-
-    deinit {
-        taskHandle?.cancel()
-    }
+    var isPremium: Bool { user?.isPremium ?? false }
 
     func getUserInfo() {
-        taskHandle = detach {
+        isLoading = true
+        async { @MainActor in
             let id = await self.getUserId()
             let name = await self.getUserName(id: id)
             let age = await self.getUserAge(id: id)
             let isPremium = await self.getUserIsPremium(id: id)
-
-            await MainActor.run {
-                self.user = User(id: id, name: name, age: age, isPremium: isPremium)
-            }
+            user = User(id: id, name: name, age: age, isPremium: isPremium)
+            isLoading = false
         }
     }
 

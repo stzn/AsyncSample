@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+@main
 struct AsyncUserSampleApp: App {
     var body: some Scene {
         WindowGroup {
@@ -15,7 +16,6 @@ struct AsyncUserSampleApp: App {
     }
 }
 
-@main
 struct AsyncTodoSampleApp: App {
     var body: some Scene {
         WindowGroup {
