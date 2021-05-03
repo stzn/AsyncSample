@@ -11,25 +11,40 @@ struct UserView: View {
     @ObservedObject var model: AsyncUserViewModel
 
     var body: some View {
-        VStack(alignment: .center) {
+        VStack(alignment: .center, spacing: 12) {
             if let user = model.user {
                 Text("User").font(.title)
                 Text("name: \(user.name)").font(.body)
+                    .foregroundColor(model.isPremium ? Color.yellow : Color.black)
                 Text("age: \(user.age)").font(.body)
             }
             if model.isLoading {
                 ProgressView()
             }
-            Button("Tap", action: { })
+            Button(action: {}) {
+                Text("Tap")
+                    .padding()
+                    .background(Color.green)
+                    .cornerRadius(8)
+            }
+            .buttonStyle(ShrinkButtonStyle())
             Button("Load", action: { model.getUserInfo() })
                 .disabled(model.isLoading)
         }
-        .background(model.isPremium ? Color.yellow : Color.clear)
     }
 }
 
 struct UserView_Previews: PreviewProvider {
     static var previews: some View {
         UserView(model: AsyncUserViewModel())
+    }
+}
+
+struct ShrinkButtonStyle: ButtonStyle {
+    func makeBody(configuration: Self.Configuration) -> some View {
+        let isPressed = configuration.isPressed
+        return configuration.label
+            .scaleEffect(x: isPressed ? 0.7 : 1, y: isPressed ? 0.7 : 1, anchor: .center)
+            .animation(.spring(response: 0.2, dampingFraction: 0.9, blendDuration: 0))
     }
 }
