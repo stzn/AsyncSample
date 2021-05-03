@@ -92,7 +92,6 @@ final class CompletionUserViewModel: ObservableObject {
             completion(true)
         }
     }
-
 }
 
 final class AsyncUserViewModel: ObservableObject {
@@ -104,10 +103,10 @@ final class AsyncUserViewModel: ObservableObject {
     func getUserInfo() {
         isLoading = true
         async { @MainActor in
-            let id = await self.getUserId()
-            let name = await self.getUserName(id: id)
-            let age = await self.getUserAge(id: id)
-            let isPremium = await self.getUserIsPremium(id: id)
+            let id = await getUserId()
+            let name = await getUserName(id: id)
+            let age = await getUserAge(id: id)
+            let isPremium = await getUserIsPremium(id: id)
             user = User(id: id, name: name, age: age, isPremium: isPremium)
             isLoading = false
         }
@@ -167,4 +166,3 @@ final class AsyncUserViewModel: ObservableObject {
         }
     }
 }
-
