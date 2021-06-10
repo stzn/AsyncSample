@@ -4,10 +4,7 @@ swift async/await sample
 
 ## Requirements
 
-- Xcode 12.5+
-- Swift 5.5+ (please use the latest snapshot <https://swift.org/download/#releases>)
-
-※ 現在2021/4/26のsnapshotを利用
+- Xcode 13.0 beta1
 
 ## syncとasync
 
