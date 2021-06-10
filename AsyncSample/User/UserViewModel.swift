@@ -109,7 +109,7 @@ final class AsyncUserViewModel: ObservableObject {
     func getUserInfo() {
         isLoading = true
         user = nil
-        async { @MainActor in
+        asyncDetached { @MainActor in
             let id = await getUserId()
             let name = await getUserName(id: id)
             let age = await getUserAge(id: id)
@@ -247,7 +247,7 @@ final class ConcurrentAsyncUserViewModel: ObservableObject {
         isLoading = true
         user = nil
         async { @MainActor in
-            let id = await self.getUserId()
+            let id = await getUserId()
             async let name = getUserName(id: id)
             async let age = getUserAge(id: id)
             async let isPremium = getUserIsPremium(id: id)

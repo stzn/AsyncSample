@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct UserView: View {
-    @ObservedObject var model: AsyncUserViewModel
+    @ObservedObject var model: ConcurrentAsyncUserViewModel
 
     var body: some View {
         VStack(alignment: .center, spacing: 12) {
@@ -36,7 +36,7 @@ struct UserView: View {
 
 struct UserView_Previews: PreviewProvider {
     static var previews: some View {
-        UserView(model: AsyncUserViewModel())
+        UserView(model: ConcurrentAsyncUserViewModel())
     }
 }
 

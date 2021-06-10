@@ -11,7 +11,7 @@ import SwiftUI
 struct AsyncUserSampleApp: App {
     var body: some Scene {
         WindowGroup {
-            UserView(model: AsyncUserViewModel())
+            UserView(model: ConcurrentAsyncUserViewModel())
         }
     }
 }
