@@ -237,6 +237,7 @@ final class DispatchGroupUserViewModel: ObservableObject {
     }
 }
 
+@MainActor
 final class ConcurrentAsyncUserViewModel: ObservableObject {
     @Published var user: User?
     @Published var isLoading: Bool = false
@@ -246,7 +247,7 @@ final class ConcurrentAsyncUserViewModel: ObservableObject {
     func getUserInfo() {
         isLoading = true
         user = nil
-        async { @MainActor in
+        async {
             let id = await getUserId()
             async let name = getUserName(id: id)
             async let age = getUserAge(id: id)
